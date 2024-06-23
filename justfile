@@ -3,4 +3,7 @@ default:
 
 bench:
     cargo build --release
-    hyperfine './target/release/ray_tracing > ./out/img.ppm' --warmup 10 --runs 30
+    hyperfine './target/release/ray_tracing > ./out/img.ppm'
+
+open:
+    kitten icat ./out/img.ppm
