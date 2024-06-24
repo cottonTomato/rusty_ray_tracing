@@ -1,25 +1,9 @@
-use ray_tracing::{Color, Point3D, Ray, Vector3};
+use ray_tracing::{hittables, Color, Hittable, Point3D, Ray, Vector3, INFINITY};
+use std::rc::Rc;
 
-fn hit_sphere(center: Point3D, radius: f64, ray: Ray) -> f64 {
-    let oc = center - ray.origin();
-    let a = ray.direction().length_squared();
-    let h = ray.direction().dot(oc);
-    let c = oc.length_squared() - radius * radius;
-    let discriminant = h * h - a * c;
-
-    if discriminant < 0.0 {
-        -1.0
-    } else {
-        (h + discriminant.sqrt()) / a
-    }
-}
-
-fn ray_color(ray: Ray) -> Color {
-    let center_of_sphere = Point3D::from_float(0.0, 0.0, -1.0);
-    let t = hit_sphere(center_of_sphere, 0.5, ray);
-    if t > 0.0 {
-        let n = (ray.at(t) - center_of_sphere).normalized();
-        return Color::from(Vector3::from_float(n.x() + 1.0, n.y() + 1.0, n.z() + 1.0) * 0.5);
+fn ray_color(ray: Ray, world: &impl Hittable) -> Color {
+    if let Some(hit_record) = world.hit(ray, 0.0, INFINITY) {
+        return Color::from((hit_record.normal + Vector3::from_float(1.0, 1.0, 1.0)) * 0.5);
     }
 
     let unit_directions = ray.direction().normalized();
@@ -52,6 +36,17 @@ fn main() {
         - viewport_v / 2.0;
     let pixel00_loc = viewport_upper_left + (pixel_delta_u + pixel_delta_v) * 0.5;
 
+    // World
+    let mut world = hittables::HitList::new();
+    world.add(Rc::new(hittables::Sphere::new(
+        Vector3::from_float(0.0, 0.0, -1.0),
+        0.5,
+    )));
+    world.add(Rc::new(hittables::Sphere::new(
+        Vector3::from_float(0.0, -100.5, -1.0),
+        100.0,
+    )));
+
     println!("P3\n{img_width} {img_height}\n255");
 
     for j in 0..img_height {
@@ -61,7 +56,7 @@ fn main() {
                 pixel00_loc + (pixel_delta_u * i as f64) + (pixel_delta_v * j as f64);
             let ray_direction = pixel_center - camera_center;
             let ray = Ray::new(camera_center, ray_direction);
-            let color = ray_color(ray);
+            let color = ray_color(ray, &world);
 
             println!("{color}");
         }
