@@ -6,4 +6,4 @@ bench:
     hyperfine './target/release/ray_tracing > ./out/img.ppm'
 
 open:
-    kitten icat ./out/img.ppm
+    kitten icat './out/img.ppm'
