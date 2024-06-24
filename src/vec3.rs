@@ -23,11 +23,11 @@ impl Vector3 {
         self.2
     }
 
-    pub fn dot(&self, rhs: &Self) -> f64 {
+    pub fn dot(&self, rhs: Self) -> f64 {
         self.0 * rhs.0 + self.1 * rhs.1 + self.2 * rhs.2
     }
 
-    pub fn cross(&self, rhs: &Self) -> Self {
+    pub fn cross(&self, rhs: Self) -> Self {
         Self::from((
             self.1 * rhs.2 - self.2 * rhs.1,
             self.2 * rhs.0 - self.0 * rhs.2,
@@ -35,20 +35,20 @@ impl Vector3 {
         ))
     }
 
-    pub fn hadamard(&self, rhs: &Self) -> Self {
+    pub fn hadamard(&self, rhs: Self) -> Self {
         Self::from((self.0 * rhs.0, self.1 * rhs.1, self.2 * rhs.2))
     }
 
     pub fn length(&self) -> f64 {
-        self.dot(self).sqrt()
+        self.dot(*self).sqrt()
+    }
+
+    pub fn length_squared(&self) -> f64 {
+        self.dot(*self)
     }
 
     pub fn normalized(&self) -> Self {
         *self / self.length()
-    }
-
-    pub fn normalize(&mut self) {
-        *self /= self.length();
     }
 }
 
@@ -145,3 +145,5 @@ impl DivAssign<f64> for Vector3 {
         *self *= 1.0 / rhs;
     }
 }
+
+pub type Point3D = Vector3;
