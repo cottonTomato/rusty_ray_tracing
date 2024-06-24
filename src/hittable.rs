@@ -1,5 +1,7 @@
 use crate::{Point3D, Ray, Vector3};
 
+pub mod sphere;
+
 #[derive(Debug, Default, Clone, Copy)]
 pub struct HitRecord {
     pub point: Point3D,
