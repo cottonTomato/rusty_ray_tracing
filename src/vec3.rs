@@ -11,6 +11,10 @@ impl Vector3 {
         Self(0.0, 0.0, 0.0)
     }
 
+    pub fn from_float(x: f64, y: f64, z: f64) -> Self {
+        Self::from((x, y, z))
+    }
+
     pub fn x(&self) -> f64 {
         self.0
     }

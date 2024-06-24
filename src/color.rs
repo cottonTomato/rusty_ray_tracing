@@ -1,3 +1,4 @@
+use crate::Vector3;
 use std::fmt::Display;
 
 #[derive(Default, Debug, Clone, Copy)]
@@ -6,6 +7,14 @@ pub struct Color(u8, u8, u8);
 impl Color {
     pub fn new() -> Self {
         Self(0, 0, 0)
+    }
+
+    pub fn from_rgb(r: u8, g: u8, b: u8) -> Self {
+        Self::from((r, g, b))
+    }
+
+    pub fn from_rgb_float(r: f64, g: f64, b: f64) -> Self {
+        Self::from((r, g, b))
     }
 
     pub fn red(&self) -> u8 {
@@ -38,6 +47,16 @@ impl From<(f64, f64, f64)> for Color {
         let rbyte = (255.999 * value.0) as u8;
         let gbyte = (255.999 * value.1) as u8;
         let bbyte = (255.999 * value.2) as u8;
+
+        Self::from((rbyte, gbyte, bbyte))
+    }
+}
+
+impl From<Vector3> for Color {
+    fn from(value: crate::vec3::Vector3) -> Self {
+        let rbyte = (255.999 * value.x()) as u8;
+        let gbyte = (255.999 * value.y()) as u8;
+        let bbyte = (255.999 * value.z()) as u8;
 
         Self::from((rbyte, gbyte, bbyte))
     }
