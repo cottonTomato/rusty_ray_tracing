@@ -10,8 +10,8 @@ mod vec3;
 pub use camera::Camera;
 pub use color::Color;
 pub use hittable::{HitRecord, Hittable};
-pub use interval::Interval;
-pub use ray::Ray;
+use interval::Interval;
+use ray::Ray;
 pub use renderer::Renderer;
 pub use vec3::{Point3D, Vector3};
 
