@@ -1,4 +1,4 @@
-use crate::{HitRecord, Hittable, Point3D, Ray};
+use crate::{HitRecord, Hittable, Interval, Point3D, Ray};
 
 pub struct Sphere {
     center: Point3D,
@@ -12,7 +12,7 @@ impl Sphere {
 }
 
 impl Hittable for Sphere {
-    fn hit(&self, ray: Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+    fn hit(&self, ray: Ray, ray_t: Interval) -> Option<HitRecord> {
         let oc = self.center - ray.origin();
         let a = ray.direction().length_squared();
         let h = ray.direction().dot(oc);
@@ -25,9 +25,9 @@ impl Hittable for Sphere {
 
         let sqrt_discriminant = discriminant.sqrt();
         let mut root = (h - sqrt_discriminant) / a;
-        if root <= t_min || root >= t_max {
+        if !ray_t.surrounds(root) {
             root = (h + sqrt_discriminant) / a;
-            if root <= t_min || root >= t_max {
+            if !ray_t.surrounds(root) {
                 return None;
             }
         }

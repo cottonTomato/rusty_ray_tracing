@@ -1,8 +1,8 @@
-use ray_tracing::{hittables, Color, Hittable, Point3D, Ray, Vector3, INFINITY};
+use ray_tracing::{hittables, Color, Hittable, Interval, Point3D, Ray, Vector3, INFINITY};
 use std::rc::Rc;
 
 fn ray_color(ray: Ray, world: &impl Hittable) -> Color {
-    if let Some(hit_record) = world.hit(ray, 0.0, INFINITY) {
+    if let Some(hit_record) = world.hit(ray, Interval::new(0.0, INFINITY)) {
         return Color::from((hit_record.normal + Vector3::from_float(1.0, 1.0, 1.0)) * 0.5);
     }
 
