@@ -7,6 +7,7 @@ pub struct Renderer<'a> {
     camera: &'a Camera,
     image: &'a mut Image,
     sampling_per_px: u32,
+    max_reflections: u32,
 }
 
 impl<'a> Renderer<'a> {
@@ -17,41 +18,57 @@ impl<'a> Renderer<'a> {
         for j in 0..img_height {
             eprintln!("\rScanlines Remaining: {} ", img_height - j);
             for i in 0..img_width {
-                // Old Method without Anti-Alising
-
-                // let color = Self::ray_color(self.camera.get_ray(i as f64, j as f64), world);
-                // self.image.set_px(i, j, color);
-
-                // New Method
                 let mut color_vec = Vector3::new();
+
                 for _ in 0..self.sampling_per_px {
                     let x = (i as f64) + random_f64() - 0.5;
                     let y = (j as f64) + random_f64() - 0.5;
                     let ray = self.camera.get_ray(x, y);
-                    color_vec += Self::ray_color_vec(ray, world);
+                    color_vec += Self::ray_color_vec(ray, world, self.max_reflections);
                 }
+
                 self.image
                     .set_px(i, j, Color::from(color_vec / self.sampling_per_px as f64));
             }
         }
     }
 
-    // Old Method
+    fn ray_color_vec(mut ray: Ray, world: &impl Hittable, max_depth: u32) -> Vector3 {
+        let mut color = Vector3::new();
+        let mut multiplier = 1.0;
 
-    // fn ray_color(ray: Ray, world: &impl Hittable) -> Color {
-    //     if let Some(hit_record) = world.hit(ray, Interval::new(0.0, INFINITY)) {
-    //         return Color::from((hit_record.normal + Vector3::from_floats(1.0, 1.0, 1.0)) * 0.5);
-    //     }
+        for _ in 0..max_depth {
+            if let Some(hit_record) = world.hit(ray, Interval::new(0.001, INFINITY)) {
+                let new_direction = random_vec3_unit_hemisphere(hit_record.normal);
+                ray = Ray::new(hit_record.point, new_direction);
+                multiplier *= 0.5;
+                continue;
+            }
 
-    //     let unit_directions = ray.direction().normalized();
-    //     let a = 0.5 * (unit_directions.y + 1.0);
-    //     let b = (Vector3::from((1.0, 1.0, 1.0)) * (1.0 - a)) + (Vector3::from((0.5, 0.7, 1.0)) * a);
-    //     Color::from(b)
-    // }
+            let unit_directions = ray.direction().normalized();
+            let a = 0.5 * (unit_directions.y + 1.0);
+            color = ((Vector3::from((1.0, 1.0, 1.0)) * (1.0 - a))
+                + (Vector3::from((0.5, 0.7, 1.0)) * a))
+                * multiplier;
+            break;
+        }
 
-    fn ray_color_vec(ray: Ray, world: &impl Hittable) -> Vector3 {
+        color
+    }
+
+    #[allow(dead_code)]
+    fn ray_color_vec_recurse(ray: Ray, world: &impl Hittable, current_depth: u32) -> Vector3 {
+        if current_depth == 0 {
+            return Vector3::new();
+        }
+
         if let Some(hit_record) = world.hit(ray, Interval::new(0.0, INFINITY)) {
-            return (hit_record.normal + Vector3::from_floats(1.0, 1.0, 1.0)) * 0.5;
+            let new_direction = random_vec3_unit_hemisphere(hit_record.normal);
+            return (Self::ray_color_vec_recurse(
+                Ray::new(hit_record.point, new_direction),
+                world,
+                current_depth - 1,
+            )) * 0.5;
         }
 
         let unit_directions = ray.direction().normalized();
@@ -65,6 +82,7 @@ pub struct RendererBuilder<'a> {
     camera: Option<&'a Camera>,
     image: Option<&'a mut Image>,
     sample_per_px: Option<u32>,
+    max_reflection: Option<u32>,
 }
 
 impl<'a> RendererBuilder<'a> {
@@ -73,6 +91,7 @@ impl<'a> RendererBuilder<'a> {
             camera: None,
             image: None,
             sample_per_px: None,
+            max_reflection: None,
         }
     }
 
@@ -91,11 +110,17 @@ impl<'a> RendererBuilder<'a> {
         self
     }
 
+    pub fn with_max_reflections(mut self, max_reflection: u32) -> Self {
+        self.max_reflection = Some(max_reflection);
+        self
+    }
+
     pub fn build(self) -> Renderer<'a> {
         Renderer {
             camera: self.camera.unwrap(),
             image: self.image.unwrap(),
             sampling_per_px: self.sample_per_px.unwrap(),
+            max_reflections: self.max_reflection.unwrap(),
         }
     }
 }

@@ -28,7 +28,9 @@ fn main() {
         .using(&camera)
         .on(&mut image)
         .with_super_sampliing(10)
+        .with_max_reflections(10)
         .build();
+
     eprintln!("Rendering Image...");
     renderer.render(&world);
 
