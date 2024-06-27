@@ -1,9 +1,9 @@
 default:
-    cargo run > './out/img.ppm'
+    cargo run --release
 
 bench:
     cargo build --release
-    hyperfine './target/release/ray_tracing > ./out/img.ppm'
+    hyperfine ./target/release/ray_tracing
 
 open:
     kitten icat './out/img.ppm'
