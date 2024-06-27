@@ -1,7 +1,7 @@
 mod camera;
 mod color;
 mod hittable;
-pub mod hittables;
+pub mod geometries;
 mod interval;
 mod ray;
 mod renderer;
