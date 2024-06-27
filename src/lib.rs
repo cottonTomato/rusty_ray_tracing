@@ -1,18 +1,20 @@
 mod camera;
 mod color;
 mod hittable;
+pub use hittable::{HitRecord, Hittable, HittableList};
 pub mod geometries;
+mod image;
+pub use image::{Image, ImgWriter};
 mod interval;
 mod ray;
 mod renderer;
 mod vec3;
+pub use renderer::{Renderer, RendererBuilder};
 
 pub use camera::Camera;
 pub use color::Color;
-pub use hittable::{HitRecord, Hittable};
 use interval::Interval;
 use ray::Ray;
-pub use renderer::Renderer;
 pub use vec3::{Point3D, Vector3};
 
 pub const INFINITY: f64 = f64::INFINITY;
