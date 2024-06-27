@@ -1,4 +1,7 @@
-use crate::{random_f64, Camera, Color, Hittable, Image, Interval, Ray, Vector3, INFINITY};
+use crate::{
+    rand::{random_f64, random_vec3_unit_hemisphere},
+    Camera, Color, Hittable, Image, Interval, Ray, Vector3, INFINITY,
+};
 
 pub struct Renderer<'a> {
     camera: &'a Camera,

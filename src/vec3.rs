@@ -3,8 +3,6 @@ use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
 
-use crate::{random_f64, random_f64_range};
-
 #[derive(Default, Debug, Clone, Copy)]
 pub struct Vector3 {
     pub x: f64,
@@ -55,22 +53,6 @@ impl Vector3 {
 
     pub fn normalized(&self) -> Self {
         *self / self.length()
-    }
-
-    pub fn random() -> Self {
-        Vector3 {
-            x: random_f64(),
-            y: random_f64(),
-            z: random_f64(),
-        }
-    }
-
-    pub fn random_range(min: f64, max: f64) -> Self {
-        Vector3 {
-            x: random_f64_range(min, max),
-            y: random_f64_range(min, max),
-            z: random_f64_range(min, max),
-        }
     }
 }
 
