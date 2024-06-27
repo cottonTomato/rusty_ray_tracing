@@ -21,3 +21,10 @@ pub const PI: f64 = std::f64::consts::PI;
 pub fn degree_to_rad(degree: f64) -> f64 {
     degree * PI / 180.0
 }
+pub fn random_f64() -> f64 {
+    rand::random::<f64>()
+}
+
+pub fn random_f64_range(min: f64, max: f64) -> f64 {
+    min + (max - min) * rand::random::<f64>()
+}
