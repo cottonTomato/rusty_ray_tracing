@@ -4,43 +4,43 @@ use std::ops::{
 };
 
 #[derive(Default, Debug, Clone, Copy)]
-pub struct Vector3(f64, f64, f64);
+pub struct Vector3 {
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
+}
 
 impl Vector3 {
     pub fn new() -> Self {
-        Self(0.0, 0.0, 0.0)
+        Self {
+            x: 0.0,
+            y: 0.0,
+            z: 0.0,
+        }
     }
 
-    pub fn from_float(x: f64, y: f64, z: f64) -> Self {
+    pub fn from_floats(x: f64, y: f64, z: f64) -> Self {
         Self::from((x, y, z))
     }
 
-    pub fn x(&self) -> f64 {
-        self.0
-    }
-
-    pub fn y(&self) -> f64 {
-        self.1
-    }
-
-    pub fn z(&self) -> f64 {
-        self.2
+    pub fn to_floats(&self) -> (f64, f64, f64) {
+        (self.x, self.y, self.z)
     }
 
     pub fn dot(&self, rhs: Self) -> f64 {
-        self.0 * rhs.0 + self.1 * rhs.1 + self.2 * rhs.2
+        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
     }
 
     pub fn cross(&self, rhs: Self) -> Self {
         Self::from((
-            self.1 * rhs.2 - self.2 * rhs.1,
-            self.2 * rhs.0 - self.0 * rhs.2,
-            self.0 * rhs.1 - self.1 * rhs.0,
+            self.y * rhs.z - self.z * rhs.y,
+            self.z * rhs.x - self.x * rhs.z,
+            self.x * rhs.y - self.y * rhs.x,
         ))
     }
 
     pub fn hadamard(&self, rhs: Self) -> Self {
-        Self::from((self.0 * rhs.0, self.1 * rhs.1, self.2 * rhs.2))
+        Self::from((self.x * rhs.x, self.y * rhs.y, self.z * rhs.z))
     }
 
     pub fn length(&self) -> f64 {
@@ -58,7 +58,11 @@ impl Vector3 {
 
 impl From<(f64, f64, f64)> for Vector3 {
     fn from(value: (f64, f64, f64)) -> Self {
-        Self(value.0, value.1, value.2)
+        Self {
+            x: value.0,
+            y: value.1,
+            z: value.2,
+        }
     }
 }
 
@@ -67,9 +71,9 @@ impl Index<usize> for Vector3 {
 
     fn index(&self, index: usize) -> &Self::Output {
         match index {
-            0 => &self.0,
-            1 => &self.1,
-            2 => &self.2,
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
             x => panic!("Invalid Index {x} accessed!"),
         }
     }
@@ -78,9 +82,9 @@ impl Index<usize> for Vector3 {
 impl IndexMut<usize> for Vector3 {
     fn index_mut(&mut self, index: usize) -> &mut Self::Output {
         match index {
-            0 => &mut self.0,
-            1 => &mut self.1,
-            2 => &mut self.2,
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
             x => panic!("Invalid Index {x} accessed!"),
         }
     }
@@ -90,13 +94,13 @@ impl Add for Vector3 {
     type Output = Self;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Self::from((self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2))
+        Self::from((self.x + rhs.x, self.y + rhs.y, self.z + rhs.z))
     }
 }
 
 impl AddAssign for Vector3 {
     fn add_assign(&mut self, rhs: Self) {
-        *self = Self::from((self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2));
+        *self = Self::from((self.x + rhs.x, self.y + rhs.y, self.z + rhs.z));
     }
 }
 
@@ -104,7 +108,7 @@ impl Neg for Vector3 {
     type Output = Self;
 
     fn neg(self) -> Self::Output {
-        Self::from((-self.0, -self.1, -self.2))
+        Self::from((-self.x, -self.y, -self.z))
     }
 }
 
@@ -126,13 +130,13 @@ impl Mul<f64> for Vector3 {
     type Output = Self;
 
     fn mul(self, rhs: f64) -> Self::Output {
-        Self::from((self.0 * rhs, self.1 * rhs, self.2 * rhs))
+        Self::from((self.x * rhs, self.y * rhs, self.z * rhs))
     }
 }
 
 impl MulAssign<f64> for Vector3 {
     fn mul_assign(&mut self, rhs: f64) {
-        *self = Self::from((self.0 * rhs, self.1 * rhs, self.2 * rhs));
+        *self = Self::from((self.x * rhs, self.y * rhs, self.z * rhs));
     }
 }
 
