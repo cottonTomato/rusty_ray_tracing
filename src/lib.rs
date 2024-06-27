@@ -5,6 +5,7 @@ pub use hittable::{HitRecord, Hittable, HittableList};
 pub mod geometries;
 mod image;
 pub use image::{Image, ImgWriter};
+pub mod image_writers;
 mod interval;
 mod ray;
 mod renderer;
